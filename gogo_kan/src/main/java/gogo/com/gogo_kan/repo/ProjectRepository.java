@@ -1,4 +1,4 @@
-package gogo.com.gogo_kan.dto;
+package gogo.com.gogo_kan.repo;
 
 import gogo.com.gogo_kan.models.Project;
 import org.springframework.data.jpa.repository.JpaRepository;

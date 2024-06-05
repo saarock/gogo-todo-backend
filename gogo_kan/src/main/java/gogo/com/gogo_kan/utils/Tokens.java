@@ -1,4 +1,4 @@
-package gogo.com.gogo_kan.response;
+package gogo.com.gogo_kan.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UnAuthorized {
-    private int status;
-    private String type;
-    private String message;
-    private String path;
+public class Tokens {
+    private String accessToken;
+    private String refreshToken;
 }

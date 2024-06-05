@@ -6,9 +6,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Setter
@@ -39,23 +41,18 @@ public class User {
 
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
+    @Column(name = "role", columnDefinition = "String default 'USER'")
     private Role role;
 
     @Column(name = "isActive", columnDefinition = "boolean default true")
     private boolean isActive;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(name = "created_date", updatable = false, nullable = false)
-    private Date createdDate;
+    private Instant createdDate;
 
-    @LastModifiedDate
+    @CreationTimestamp
     @Column(name = "last_modified_date", nullable = false)
-    private Date lastModifiedDate;
-
-
-
-
-
+    private Instant lastModifiedDate;
 
 }

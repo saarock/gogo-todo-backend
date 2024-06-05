@@ -1,11 +1,10 @@
-package gogo.com.gogo_kan.dto;
+package gogo.com.gogo_kan.repo;
 
 import gogo.com.gogo_kan.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,13 +12,13 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
-    Optional<User> findByEmail(String email);
+    User findByEmail(String email);
 
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE user SET email = :userEmail WHERE id = :userId", nativeQuery = true)
-    int updateUserEmail(@Param("userId") int userId, @Param("userEmail") String userEmail);
+    User updateUserEmail(@Param("userId") long userId, @Param("userEmail") String userEmail);
 
     @Modifying
     @Transactional

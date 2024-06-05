@@ -18,7 +18,7 @@ public class OTP {
         int length = 6;
 
         // Define the characters from which the OTP will be composed
-        String numbers = "0123456789";
+        String numbers = "012345678911121314";
 
         // Use a StringBuilder to store the OTP
         StringBuilder otp = new StringBuilder();

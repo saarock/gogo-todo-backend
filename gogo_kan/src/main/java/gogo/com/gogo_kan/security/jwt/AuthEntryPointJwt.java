@@ -1,7 +1,7 @@
 package gogo.com.gogo_kan.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gogo.com.gogo_kan.response.UnAuthorized;
+import gogo.com.gogo_kan.dto.response.UnAuthorized;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
