@@ -43,22 +43,21 @@ public class JwtUtils {
     }
 
 
-
-
     public String generateTokenFromUsername(UserDetails userDetails) {
         String username = userDetails.getUsername();
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + jwtAccessExp))
+                .expiration(new Date(System.currentTimeMillis() + jwtAccessExp))
                 .signWith((SecretKey) key()).compact();
     }
-    public String   generateRefreshTokenFromUsername(UserDetails userDetails) {
+
+    public String generateRefreshTokenFromUsername(UserDetails userDetails) {
         String username = userDetails.getUsername();
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + jwtAccessExp))
+                .expiration(new Date(System.currentTimeMillis() + jwtRefreshExp))
                 .signWith((SecretKey) key()).compact();
     }
 
@@ -73,6 +72,7 @@ public class JwtUtils {
 
 
     }
+
     public boolean validateToken(String authToken) {
         try {
             System.out.println("validate");
@@ -92,7 +92,6 @@ public class JwtUtils {
         }
         return false;
     }
-
 
 
 }

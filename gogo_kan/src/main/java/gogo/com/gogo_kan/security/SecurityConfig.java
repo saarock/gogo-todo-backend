@@ -2,12 +2,10 @@ package gogo.com.gogo_kan.security;
 
 import gogo.com.gogo_kan.security.jwt.AuthEntryPointJwt;
 import gogo.com.gogo_kan.security.jwt.AuthTokenFilter;
-import gogo.com.gogo_kan.services.impl.user.CustomeUserDetailsImpl;
+import gogo.com.gogo_kan.service.impl.user.CustomeUserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.expression.spel.CodeFlow;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -26,8 +24,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.sql.DataSource;
-import java.security.CodeSigner;
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -50,7 +46,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeRequest ->
-                authorizeRequest.requestMatchers("/signin").permitAll()
+                authorizeRequest.requestMatchers("/login").permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/home").permitAll()
                         .requestMatchers("/send-mail").permitAll()
@@ -117,11 +113,15 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
         return builder.getAuthenticationManager();
     }
 
+    public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
+        return this.passwordEncoder().matches(rawPassword, encodedPassword);
+    }
 
 
 

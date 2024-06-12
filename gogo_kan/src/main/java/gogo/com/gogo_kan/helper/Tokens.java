@@ -1,6 +1,5 @@
-package gogo.com.gogo_kan.dto.request;
+package gogo.com.gogo_kan.helper;
 
-import gogo.com.gogo_kan.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequest {
-    private User user;
-    private long otp;
+public class Tokens {
+    private String accessToken;
+    private String refreshToken;
 }

@@ -1,16 +1,20 @@
 package gogo.com.gogo_kan.dto.request;
 
-import gogo.com.gogo_kan.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequest {
-    private User user;
-    private long otp;
+public class CreateProductRequest {
+    private String name;
+//    private String id;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private int userId;
 }
