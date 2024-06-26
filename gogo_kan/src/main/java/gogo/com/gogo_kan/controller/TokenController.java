@@ -44,7 +44,6 @@ public class TokenController {
         }
         String refreshToken = refreshTokenRequest.getRefreshToken();
         String username = jwtUtils.getUserNameFromJwtToken(refreshToken);
-
         try {
             UserDetails userDetails = customeUserDetailsImpl.loadUserByUsername(username);
             String accessToken = jwtUtils.generateTokenFromUsername(userDetails);

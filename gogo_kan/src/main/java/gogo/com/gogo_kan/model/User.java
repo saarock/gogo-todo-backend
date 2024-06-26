@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +40,11 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", columnDefinition = "String default 'USER'")
+    @Column(name = "role", columnDefinition = "varchar(255) default 'USER'")
     private Role role;
 
-    @Column(name = "isActive", columnDefinition = "boolean default true")
-    private boolean isActive;
+    @Column(name = "isActive", columnDefinition = "boolean default 1")
+    private int isActive;
 
     @CreationTimestamp
     @Column(name = "created_date", updatable = false, nullable = false)

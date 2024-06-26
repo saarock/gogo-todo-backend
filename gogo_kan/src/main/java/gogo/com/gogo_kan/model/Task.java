@@ -17,15 +17,22 @@ import java.time.Instant;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int taskId;
 
-    @Column(name = "task")
-    private String task;
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "content")
+    private String content;
 
     @JsonBackReference
     @ManyToOne
     private Board board;
+
+    @Column(name = "board_index")
     private int boardIndex;
+
+    @Column(name = "task_index")
     private int index;
 
     @Column(name = "created_at", updatable = false, nullable = false)

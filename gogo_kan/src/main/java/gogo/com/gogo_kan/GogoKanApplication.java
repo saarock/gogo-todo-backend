@@ -10,5 +10,4 @@ public class GogoKanApplication {
     public static void main(String[] args) {
         SpringApplication.run(GogoKanApplication.class, args);
     }
-
 }

@@ -20,20 +20,24 @@ import java.util.List;
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int  boardId;
 
     @Column(name = "board_name")
-    private String boardName;
+    private String name;
 
     @JsonBackReference
     @ManyToOne
+    @JoinColumn(name = "project_id")
     private Product boardProject;
 
 
-    @OneToMany(mappedBy = "board")
-    private List<Task> boardTask;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<Task> tasks;
 
-    private int index;
+    @Column(name = "board_index")
+    private int boardIndex;
+
+    @Column(name = "project_index")
     private int projectIndex;
 
     @Column(name = "created_at", updatable = false, nullable = false)

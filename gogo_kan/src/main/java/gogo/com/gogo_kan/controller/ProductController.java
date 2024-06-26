@@ -6,13 +6,25 @@ import gogo.com.gogo_kan.dto.request.CreateProductRequest;
 import gogo.com.gogo_kan.dto.request.DeleteProductRequest;
 import gogo.com.gogo_kan.dto.request.UpdateProductRequest;
 import gogo.com.gogo_kan.dto.response.ErrorResponse;
+import gogo.com.gogo_kan.dto.response.ProductResponse;
+import gogo.com.gogo_kan.exception.*;
 import gogo.com.gogo_kan.model.Product;
 import gogo.com.gogo_kan.model.User;
 import gogo.com.gogo_kan.service.ProductService;
 import gogo.com.gogo_kan.service.UserService;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 public class ProductController {
@@ -23,54 +35,156 @@ public class ProductController {
 
 
 
-
     @PostMapping("/create-new-product")
     public Object createNewProduct(@RequestBody CreateProductRequest productRequest) {
+
         try {
+
             if (productRequest == null || productRequest.getName().isEmpty() || productRequest.getUserId() <= -1) {
-                throw new IllegalArgumentException("Invalid product request data");
+                throw new InvalidException("Invalid product request data");
             }
 
             User user = userService.findById(productRequest.getUserId());
 
             if (user == null) {
-                throw new IllegalArgumentException("User not found");
+                throw new UserNotFoundException("User not found");
+            }
+
+            String productName = productRequest.getName();
+            int userId = productRequest.getUserId();
+            if (productName.isEmpty()) {
+                throw new ProductException("ProductName required");
+            }
+
+            int productIndex= productRequest.getIndex();
+
+            //Improve code here more;
+            boolean isExist = productService.findByProductNameAndUser(productName, userId);
+            if (isExist) {
+                System.out.println("hahaahhaha product already exist");
+                throw new ProductException("Product Already exist");
             }
 
             Product product = new Product();
-            product.setProductName(productRequest.getName());
-//            product.setIndex(productRequest.getProductIndex());
+            product.setName(productName);
             product.setProductUser(user);
+            product.setIndex(productIndex);
+
             Product savedProduct = productService.createNewProduct(product);
             if (savedProduct == null) {
-                return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", "Product Created UnSuccessFUll");
-
+                throw new ProductException("Cannot created Product");
             }
-            return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product created successfully", savedProduct);
-        } catch (IllegalArgumentException e) {
-            return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
+
+            ProductResponse productResponse = new ProductResponse();
+            productResponse.setId(String.valueOf(product.getId()));
+            productResponse.setName(product.getName());
+            if (product.getBoards() == null)  {
+                productResponse.setBoards(new ArrayList<>());
+            } else {
+                productResponse.setBoards(product.getBoards()); // Set boards accordingly
+            }
+            productResponse.setIndex(product.getIndex());
+            productResponse.setCreatedAt(String.valueOf(product.getCreatedDate()));
+            productResponse.setUpdatedAt(String.valueOf(product.getUpdatedAt()));
+            productResponse.setUserId(String.valueOf(product.getProductUser().getId()));
+
+
+
+            return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product created successfully", productResponse);
         } catch (Exception e) {
-            return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "error", "An unexpected error occurred");
+            return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
+
         }
     }
 
 
-
     @PutMapping("/update-product/{id}")
-    public Object updateProductName(@PathVariable long id ,@RequestBody UpdateProductRequest updateProductRequest) {
-        return  null;
+    public Object updateProductName(@PathVariable int id, @RequestBody UpdateProductRequest updateProductRequest) {
+        try {
+            String productName = updateProductRequest.getProductName();
+            if (productName.isEmpty()) {
+                throw new ProductNameRequired("Product Name Required");
+            }
+
+
+
+            Product product = productService.updateProduct(id, productName);
+
+            if (product == null) {
+                throw new ProductException("Product Not update Exception");
+            }
+
+
+            return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product updated Successfully", product);
+
+        } catch (Exception e) {
+            return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete-product/{id}")
-    public Object deleteProduct(@PathVariable long id,  @RequestBody DeleteProductRequest deleteProductRequest) {
-        return null;
+    public Object deleteProduct(@PathVariable int id) {
+        System.out.println(id + "test test ***");
+        boolean isDeleted = this.productService.deleteProduct(id);
+        if (isDeleted) {
+            return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product Deleted Successfullt", null);
+        } else {
+            throw new ProductException("Can't deleted the product");
+        }
     }
 
-    @GetMapping("get-products")
-    public Object getProducts() {
 
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class UserIdRequest {
+        private int userId;
     }
 
 
 
+    @GetMapping("/get-products")
+    public Object getProducts(@RequestParam(value = "page", defaultValue = "0") int page,
+                              @RequestParam(value = "size", defaultValue = "0") int size, @RequestParam(value = "sortBy",
+            defaultValue = "updatedAt")String sortBy,
+                              @RequestParam(value = "userId")int userId,  @RequestParam("direction") String direction) {
+        try {
+            System.out.println(page);
+            System.out.println(size);
+            System.out.println(sortBy);
+            System.out.println(userId);
+            System.out.println(direction);
+            if (userId <= -1) {
+                throw new UserDetailsRequriedException("User id is less than 1");
+            }
+
+            Page<Product> productPage = productService.getProductByUser(userId, page, size, sortBy, direction);
+
+//        List<ProductResponse> productResponses = new ArrayList<>();
+
+
+//        for (Product product : productPage.getContent()) {
+//            ProductResponse productResponse = new ProductResponse();
+//            productResponse.setId(String.valueOf(product.getId()));
+//            productResponse.setName(product.getProductName());
+//            System.out.println(product.getProductBoards() + "his$$$$$");
+//            productResponse.setBoards(product.getProductBoards()); // Set boards accordingly
+//            productResponse.setIndex(0);
+//            productResponse.setCreatedAt(String.valueOf(product.getCreatedDate()));
+//            productResponse.setUpdatedAt(String.valueOf(product.getLastModifiedDate()));
+//            productResponse.setUserId(String.valueOf(product.getProductUser().getId()));
+//            productResponses.add(productResponse);
+//        }
+            return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product created successfully", productPage);
+        } catch (Exception e) {
+            return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
+
+        }
+    }
 }
+
+
+
+
+

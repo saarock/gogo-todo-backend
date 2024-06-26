@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.Instant;
 import java.util.List;
 
@@ -23,14 +22,18 @@ public class Product {
     private int id;
 
     @Column(name = "product_name")
-    private String productName;
+    private String name;
+
+    @Column(name = "product_index")
+    private int index;
 
     @JsonBackReference
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User productUser;
 
-    @OneToMany(mappedBy = "boardProject")
-    private List<Board> productBoards;
+    @OneToMany(mappedBy = "boardProject", cascade = CascadeType.REMOVE)
+    private List<Board> boards;
 
     @CreationTimestamp
     @Column(name = "created_date", updatable = false, nullable = false)
@@ -40,7 +43,7 @@ public class Product {
 
     @UpdateTimestamp
     @Column(name = "last_modified_date", nullable = false)
-    private Instant lastModifiedDate;
+    private Instant updatedAt;
 
 
 

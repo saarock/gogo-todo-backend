@@ -46,9 +46,10 @@ public class UserController {
     private SecurityConfig securityConfig;
 
 
+
     @PostMapping("/register")
-    public Object registerUser(@RequestBody UserRequest userRequest) {
-        try {
+    public Object registerUser(@RequestBody UserRequest userRequest) throws Exception {
+
             if (userRequest == null) {
                 throw new UserDetailsRequriedException("User details Required!");
             }
@@ -59,25 +60,25 @@ public class UserController {
             String stringOtp = String.valueOf(otp).trim();
 
             if (stringOtp.isEmpty()) {
-                throw new OtpRequiredException("Otp required");
+                throw new OTPException("Otp required");
             }
 
             int stringOtpLen = stringOtp.length();
 
             if (stringOtpLen > 6) {
-                throw new OtpRequiredException("OTP Required");
+                throw new OTPException("Otp required");
             }
 
             if (newUser == null) {
-                throw new PasswordRequiredException("User details Required!");
+                throw new PasswordException("User details Required!");
             }
 
             if (newUser.getPassword().isEmpty()) {
-                throw new PasswordRequiredException("Password Required");
+                throw new PasswordException("Password Required");
             }
 
             if (newUser.getEmail().isEmpty()) {
-                throw new EmailRequiredException("Email is required");
+                throw new EmailException("Email is required");
             }
 
             if (newUser.getFullName().isEmpty()) {
@@ -92,20 +93,20 @@ public class UserController {
             }
             Long storedOTP = otpStore.getStoredOTP(newUser.getEmail());
             if (storedOTP == null) {
-                throw new OtpExpiredException("Opt Expired");
+                throw new OTPException("Opt Expired");
             }
 
             if (storedOTP != otp) {
-                throw new InvalidOtpException("Incorrect OTP");
+                throw new OTPException("Incorrect OTP");
             }
-            // No sence but also i want to check;
+            // No sense but also I want to check;
             if (storedOTP == -1) {
-                throw new InvalidOtpException("Invalid OTP");
+                throw new OTPException("Invalid OTP");
             }
 
             User isUserExist = userService.isEmailExistIfExitGetData(newUser.getEmail());
             if (isUserExist != null) {
-                throw new EmailAlreadyExistException("Email already Exist");
+                throw new EmailException("Email already Exist");
             }
 
             User user = userService.registerUser(newUser);
@@ -123,9 +124,6 @@ public class UserController {
 
             return new UserResponse("success", HttpStatus.CREATED, "UserRegister successfull", helperUser, tokens);
 
-        } catch (Exception e) {
-            return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
-        }
 
     }
 
@@ -135,54 +133,50 @@ public class UserController {
         return "User";
     }
 
+
     @PostMapping("/login")
-    public Object login(@RequestBody LoginRequest loginRequest) {
-        try {
-            if (loginRequest == null) {
-                throw new NullPointerException("Login details Required");
-            }
-            String email = loginRequest.getEmail();
-            if (email.isEmpty()) {
-                throw new IllegalArgumentException("Email required");
-            }
+    public Object login(@RequestBody LoginRequest loginRequest) throws Exception {
 
-            String password = loginRequest.getPassword();
+    if (loginRequest == null) {
+        throw new UserDetailsRequriedException("Login details Required");
+    }
+    String email = loginRequest.getEmail();
+    if (email.isEmpty()) {
+        throw new EmailException("Email required");
+    }
 
-            if (password.isEmpty()) {
-                throw new IllegalArgumentException("Email required");
-            }
+    String password = loginRequest.getPassword();
 
-            UserDetails userDetails = customeUserDetails.loadUserByUsername(email);
-            if (userDetails == null) {
-                throw new CredentialNotFoundException("Credentials doesn't match");
-            }
+    if (password.isEmpty()) {
+        throw new PasswordException("Password required");
+    }
 
-            String encodedPassword = userDetails.getPassword();
-            boolean isPasswodMatch = securityConfig.isPasswordMatch(password, encodedPassword);
+    UserDetails userDetails = customeUserDetails.loadUserByUsername(email);
+    if (userDetails == null) {
+        throw new EmailException("Credentials doesn't match");
+    }
 
-            if (!isPasswodMatch) {
-                throw new CredentialNotFoundException("Credentials doesn't match");
-            }
+    String encodedPassword = userDetails.getPassword();
+    boolean isPasswordMatch = securityConfig.isPasswordMatch(password, encodedPassword);
 
-            String accessToken = jwtUtils.generateTokenFromUsername(userDetails);
-            String refreshToken = jwtUtils.generateRefreshTokenFromUsername(userDetails);
-            Tokens tokens = new Tokens(accessToken, refreshToken);
-            User user = userDetailsCache.getUserFromCache(userDetails.getUsername());
-            // initialize the helper user;
-            gogo.com.gogo_kan.helper.User helperUser = new gogo.com.gogo_kan.helper.User();
-            helperUser.setId(user.getId());
-            helperUser.setRole(user.getRole());
-            helperUser.setEmail(user.getEmail());
-            helperUser.setCreatedAt(user.getCreatedDate());
-            helperUser.setLastModifiedDate(user.getLastModifiedDate());
-            helperUser.setFullName(user.getFullName());
-            return new UserResponse("success", HttpStatus.OK, "UserSign successfully", helperUser, tokens);
-        } catch (IllegalArgumentException | CredentialNotFoundException | NullPointerException e) {
-            return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
-        } catch (Exception e) {
-            return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "error", e.getMessage());
+    if (!isPasswordMatch) {
+        throw new PasswordException("Credentials doesn't match");
+    }
 
-        }
+    String accessToken = jwtUtils.generateTokenFromUsername(userDetails);
+    String refreshToken = jwtUtils.generateRefreshTokenFromUsername(userDetails);
+    Tokens tokens = new Tokens(accessToken, refreshToken);
+    User user = userDetailsCache.getUserFromCache(userDetails.getUsername());
+    // initialize the helper user;
+    gogo.com.gogo_kan.helper.User helperUser = new gogo.com.gogo_kan.helper.User();
+    helperUser.setId(user.getId());
+    helperUser.setRole(user.getRole());
+    helperUser.setEmail(user.getEmail());
+    helperUser.setCreatedAt(user.getCreatedDate());
+    helperUser.setLastModifiedDate(user.getLastModifiedDate());
+    helperUser.setFullName(user.getFullName());
+    return new UserResponse("success", HttpStatus.OK, "UserSign successfully", helperUser, tokens);
+
     }
 
 

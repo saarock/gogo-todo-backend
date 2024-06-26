@@ -1,10 +1,13 @@
 package gogo.com.gogo_kan.service.impl.user;
 
 
+import gogo.com.gogo_kan.exception.UserServiceException;
 import gogo.com.gogo_kan.model.User;
 import gogo.com.gogo_kan.repo.UserRepository;
 import gogo.com.gogo_kan.security.SecurityConfig;
 import gogo.com.gogo_kan.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,7 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -26,7 +30,8 @@ public class UserServiceImpl implements UserService {
             user.setPassword(securityConfig.passwordEncoder().encode(user.getPassword()));
             return userRepository.save(user);
         } catch (Exception err) {
-            throw new Exception(err.getMessage());
+            logger.error(err.getMessage());
+            throw new UserServiceException(err.getMessage());
         }
     }
 
@@ -37,7 +42,7 @@ public class UserServiceImpl implements UserService {
         try {
             return userRepository.findByEmail(email);
         } catch (Exception e) {
-            System.out.println(e.getMessage() + "Error while getting the user when from email");
+            logger.error("Error while getting the user when from email");
             return null;
         }
     }
@@ -51,7 +56,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User updateUserFullName(long id, String newFulName) {
-
         return null;
     }
 
@@ -64,7 +68,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(int id) {
-        Optional<User> isFound = this.userRepository.findById(id);
-        return isFound.get();
+        try {
+            Optional<User> isFound = this.userRepository.findById(id);
+            return isFound.orElse(null);
+        } catch (Exception error) {
+            logger.error(error.getMessage());
+            return null;
+        }
     }
 }

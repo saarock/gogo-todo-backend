@@ -5,17 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
-
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class CreateProductRequest {
+@NoArgsConstructor
+public class TaskRequest {
     private String name;
-//    private String id;
-    private Instant createdAt;
-    private Instant updatedAt;
-    private int userId;
+    private String content;
     private int index;
+    private int boardId;
+    private int boardIndex;
 }
