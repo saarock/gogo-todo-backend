@@ -31,13 +31,13 @@ public class GlobalExceptionHandler {
             EmailException.class,
             InvalidException.class,
             ProductException.class,
-            BoardException.class
+            BoardException.class,
+            TaskException.class,
     })
     protected ResponseEntity<ErrorResponse> handelConflict(
             RuntimeException ex, WebRequest request
     ) {
 
-        System.out.println("Error test ******************* ");
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, "error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

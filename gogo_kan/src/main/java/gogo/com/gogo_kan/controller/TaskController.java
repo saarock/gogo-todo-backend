@@ -2,8 +2,9 @@ package gogo.com.gogo_kan.controller;
 
 import gogo.com.gogo_kan.dto.GlobalSuccessResponse;
 import gogo.com.gogo_kan.dto.request.TaskRequest;
-import gogo.com.gogo_kan.dto.response.TaskResponse;
+import gogo.com.gogo_kan.dto.request.TaskUpdateRequest;
 import gogo.com.gogo_kan.exception.BoardNotFoundException;
+import gogo.com.gogo_kan.exception.TaskException;
 import gogo.com.gogo_kan.model.Board;
 import gogo.com.gogo_kan.model.Task;
 import gogo.com.gogo_kan.service.BoardService;
@@ -26,8 +27,6 @@ public class TaskController {
             throw new BoardNotFoundException("Board not found");
         }
 
-
-
         Task task = new Task();
         task.setBoard(board);
         task.setName(taskRequest.getName());
@@ -44,15 +43,34 @@ public class TaskController {
 
     }
 
+
     @PutMapping("/update-task/{id}")
-    public Object updateTask(@PathVariable long id) {
-        return null;
+    public Object updateTask(@PathVariable int id, @RequestBody TaskUpdateRequest taskUpdateRequest) {
+        System.out.println("haha");
+        if (taskUpdateRequest == null) {
+            throw new TaskException("Task updated is required in the proper manner");
+        }
+
+        Task task = taskService.updateTask(taskUpdateRequest, id);
+        if (task == null) throw new TaskException("Cannot get the updated task");
+        System.out.println(task.getName() + "   this is the task name");
+
+        return new GlobalSuccessResponse<>(
+                HttpStatus.OK,
+                "success",
+                "Task updated Successfully",
+                task);
+
     }
 
 
-    @DeleteMapping("delete-task/{id}")
-    public Object deleteTask(@PathVariable long id) {
-        return null;
+
+    @DeleteMapping("/delete-task/{id}")
+    public Object deleteTask(@PathVariable int id) {
+         boolean isDeleted = taskService.deletedTask(id);
+         if (!isDeleted) throw new TaskException("Cannot deleted the task try again");
+         return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Task deleted Successfully", null);
+
     }
 
 }
