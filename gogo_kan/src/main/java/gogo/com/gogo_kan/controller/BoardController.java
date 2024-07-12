@@ -12,14 +12,9 @@ import gogo.com.gogo_kan.model.Product;
 import gogo.com.gogo_kan.model.Task;
 import gogo.com.gogo_kan.service.BoardService;
 import gogo.com.gogo_kan.service.ProductService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +46,6 @@ public class BoardController {
         board.setBoardProject(product);
         try {
             Board savedBoard = boardService.createNewBoard(board);
-
             if (savedBoard == null) {
                 throw new Exception("Board doesn't saved");
             }
@@ -67,7 +61,7 @@ public class BoardController {
                 boardResponse.setTasks(userTasks);
             }
 //            boardResponse.set
-            return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product created successfully", boardResponse);
+            return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Board created successfully", boardResponse);
 
 
         } catch (Exception e) {
@@ -93,15 +87,12 @@ public class BoardController {
     }
 
 
-
     @PutMapping("/update-board/{id}")
-    public Object updateBoard(@PathVariable int id, @RequestBody  BoardUpdateRequestWrapper boardRequestWrapper) {
+    public Object updateBoard(@PathVariable int id, @RequestBody BoardUpdateRequestWrapper boardRequestWrapper) {
         if (id == -1 || id == 0) {
             throw new BoardIdNotFoundException("Board Id not found Exception");
         }
-        System.out.println(id);
         String boardName = boardRequestWrapper.getBoardName();
-        System.out.println(boardName + "test boardname *****");
         if (boardName == null) {
             throw new BoardNameNotFoundException("Board details not found");
         }

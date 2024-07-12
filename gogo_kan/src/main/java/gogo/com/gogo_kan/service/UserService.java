@@ -6,7 +6,7 @@ public interface UserService {
     public User registerUser(User user) throws Exception;
     public User isEmailExistIfExitGetData(String email) throws Exception;
     public User updateUserEmail(long id, String newEmail);
-    public User updateUserFullName(long id, String newFullName);
+    public User updateUserFullName(int id, String newFullName);
     public User updateUserPassword(String email, String newPassword);
     public User findById(int id);
 }

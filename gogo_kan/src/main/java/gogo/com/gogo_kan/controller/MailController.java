@@ -48,7 +48,7 @@ public class MailController {
                 }
             }
             // if all right send the success message
-            return new EmailResponse(200, "success", "OTP send successfully ", userEmail);
+            return new EmailResponse(HttpStatus.OK,"success", "OTP send successfully ", userEmail);
         } catch (Exception e) {
             System.out.println(e.getMessage() + "############");
             return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());

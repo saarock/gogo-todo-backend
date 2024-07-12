@@ -55,8 +55,17 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User updateUserFullName(long id, String newFulName) {
+    public User updateUserFullName(int id, String newFulName) {
+        try {
+            User user =  userRepository.getReferenceById(id);
+            if (user == null) return null;
+            user.setFullName(newFulName);
+            User savedUser = userRepository.save(user);
+            return savedUser;
+
+        } catch (Error e) {
         return null;
+        }
     }
 
     @Transactional

@@ -26,7 +26,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.login.CredentialNotFoundException;
 
 @RestController
 public class UserController {
@@ -34,8 +33,6 @@ public class UserController {
     private UserService userService;
     @Autowired
     private OTPUtility otpStore;
-    @Autowired
-    private AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
@@ -236,7 +233,7 @@ public class UserController {
     }
 
     @PutMapping("/change-fullname/{id}")
-    public Object updateUserFullName(@PathVariable long id, @RequestBody FullNameRequest fullNameRequest) {
+    public Object updateUserFullName(@PathVariable int id, @RequestBody FullNameRequest fullNameRequest) {
         try {
             Long.parseLong(String.valueOf(id));
         } catch (Exception e) {
@@ -246,7 +243,6 @@ public class UserController {
         if (fullNameRequest == null) {
             return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", "FullName should be in the proper manner.");
         }
-
 
         try {
             String newFullName = fullNameRequest.getFullName();
@@ -266,6 +262,7 @@ public class UserController {
             return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "error", e.getMessage());
         }
     }
+
 
 
 }
