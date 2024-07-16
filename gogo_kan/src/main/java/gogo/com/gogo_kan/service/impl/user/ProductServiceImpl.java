@@ -90,4 +90,13 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    @Override
+    public List<Product> searchProductByName(String productName, int userId) {
+        try {
+            return productRepository.findByProductUserIdAndNameStartingWith(userId, productName);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

@@ -150,33 +150,37 @@ public class ProductController {
             defaultValue = "updatedAt")String sortBy,
                               @RequestParam(value = "userId")int userId,  @RequestParam("direction") String direction) {
         try {
-            System.out.println(page);
-            System.out.println(size);
-            System.out.println(sortBy);
-            System.out.println(userId);
-            System.out.println(direction);
             if (userId <= -1) {
                 throw new UserDetailsRequriedException("User id is less than 1");
             }
 
             Page<Product> productPage = productService.getProductByUser(userId, page, size, sortBy, direction);
-
-//        List<ProductResponse> productResponses = new ArrayList<>();
-
-
-//        for (Product product : productPage.getContent()) {
-//            ProductResponse productResponse = new ProductResponse();
-//            productResponse.setId(String.valueOf(product.getId()));
-//            productResponse.setName(product.getProductName());
-//            System.out.println(product.getProductBoards() + "his$$$$$");
-//            productResponse.setBoards(product.getProductBoards()); // Set boards accordingly
-//            productResponse.setIndex(0);
-//            productResponse.setCreatedAt(String.valueOf(product.getCreatedDate()));
-//            productResponse.setUpdatedAt(String.valueOf(product.getLastModifiedDate()));
-//            productResponse.setUserId(String.valueOf(product.getProductUser().getId()));
-//            productResponses.add(productResponse);
-//        }
             return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product created successfully", productPage);
+        } catch (Exception e) {
+            return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
+
+        }
+    }
+
+
+    @GetMapping("/search")
+    public Object searchProduct(@RequestParam(value = "userId") int userId, @RequestParam(value = "productName") String productName) {
+        try {
+            System.out.println("***************************** ");
+            System.out.println(userId);
+            System.out.println(productName);
+            List<Product> products = productService.searchProductByName(productName, userId);
+            if (!products.isEmpty()) {
+                System.out.println("this are the procuits ***************");
+                for (Product p : products) {
+                    System.out.println(p.getName());
+                }
+                return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Search product", products);
+            } else {
+                return new ErrorResponse(HttpStatus.NOT_FOUND, "error", "Product Not found");
+
+            }
+
         } catch (Exception e) {
             return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
 
