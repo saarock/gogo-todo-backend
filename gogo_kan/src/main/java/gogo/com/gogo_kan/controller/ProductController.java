@@ -39,6 +39,7 @@ public class ProductController {
     public Object createNewProduct(@RequestBody CreateProductRequest productRequest) {
 
         try {
+            System.out.println("Creating new Product");
 
             if (productRequest == null || productRequest.getName().isEmpty() || productRequest.getUserId() <= -1) {
                 throw new InvalidException("Invalid product request data");
@@ -185,6 +186,21 @@ public class ProductController {
             return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
 
         }
+    }
+
+    @PutMapping("/modified-product/{id}")
+    public Object modifiedProduct(@PathVariable int id)  {
+        Product newProduct = productService.findProductByProductId(id);
+        if (newProduct == null) {
+            throw new ProductException("Product Not found");
+        }
+
+        Product newProductJustSaved = productService.createNewProduct(newProduct);
+        if (newProductJustSaved == null) {
+            throw new ProductException("Product Already exist");
+        }
+        return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product updated", newProductJustSaved);
+
     }
 }
 

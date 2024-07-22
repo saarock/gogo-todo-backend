@@ -28,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product createNewProduct(Product product) {
         try {
+            product.setName(product.getName());
             return productRepository.save(product);
         } catch (Exception e) {
            logger.error(e.getMessage());

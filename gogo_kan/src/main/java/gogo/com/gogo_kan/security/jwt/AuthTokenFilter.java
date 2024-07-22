@@ -1,6 +1,7 @@
 package gogo.com.gogo_kan.security.jwt;
 
 
+import gogo.com.gogo_kan.dto.response.UnAuthorized;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +30,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logger.debug("AuthTokenFilter called for URI: {}", request.getRequestURI());
-
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateToken(jwt)) {
@@ -41,6 +41,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 logger.debug("Role from JWT : {}", userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                logger.debug("JWT Token is null or invalid");
+
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e.getMessage());
@@ -50,6 +53,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private String parseJwt(HttpServletRequest request) {
         String jwt = jwtUtils.getJwtFromHeader(request);
+        System.out.println(jwt);
         logger.debug("AuthTokenFilter.java: {}", jwt);
         return jwt;
     }
