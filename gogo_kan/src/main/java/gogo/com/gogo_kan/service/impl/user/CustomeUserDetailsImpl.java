@@ -1,6 +1,8 @@
 package gogo.com.gogo_kan.service.impl.user;
 
 
+import gogo.com.gogo_kan.exception.CredentialException;
+import gogo.com.gogo_kan.exception.EmailException;
 import gogo.com.gogo_kan.model.User;
 import gogo.com.gogo_kan.repo.UserRepository;
 import gogo.com.gogo_kan.util.UserDetailsCacheUtility;
@@ -23,16 +25,21 @@ public class CustomeUserDetailsImpl implements UserDetailsService {
     private UserDetailsCacheUtility userDetailsCache;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByEmail(username);
-        if (user != null) {
-            userDetailsCache.addToCache(user);
+        try {
+            User user = userRepo.findByEmail(username);
+            System.out.println("user this is user ***" + user);
+            if (user != null) {
+                userDetailsCache.addToCache(user);
 
-            return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    new ArrayList<>()
-            );
+                return new org.springframework.security.core.userdetails.User(
+                        user.getEmail(),
+                        user.getPassword(),
+                        new ArrayList<>()
+                );
+            }
+            throw new CredentialException("Credentials doesn't match");
+        } catch (Error eror) {
+            throw new CredentialException("Credential doesn't match exception.");
         }
-        throw new UsernameNotFoundException("Credentials doesn't match");
     }
 }

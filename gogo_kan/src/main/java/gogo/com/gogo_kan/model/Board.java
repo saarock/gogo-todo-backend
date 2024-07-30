@@ -49,4 +49,7 @@ public class Board {
     @UpdateTimestamp
     private Instant updatedAt;
 
+    @Column(name = "complete")
+    private boolean complete = false;
+
 }

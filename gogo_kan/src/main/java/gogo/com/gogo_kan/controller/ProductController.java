@@ -154,8 +154,8 @@ public class ProductController {
             if (userId <= -1) {
                 throw new UserDetailsRequriedException("User id is less than 1");
             }
-
             Page<Product> productPage = productService.getProductByUser(userId, page, size, sortBy, direction);
+
             return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product created successfully", productPage);
         } catch (Exception e) {
             return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());

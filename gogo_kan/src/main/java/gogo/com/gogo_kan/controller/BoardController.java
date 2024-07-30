@@ -4,6 +4,7 @@ package gogo.com.gogo_kan.controller;
 import gogo.com.gogo_kan.dto.GlobalSuccessResponse;
 import gogo.com.gogo_kan.dto.request.BoardRequest;
 import gogo.com.gogo_kan.dto.request.BoardUpdateRequestWrapper;
+import gogo.com.gogo_kan.dto.request.IsCompleted;
 import gogo.com.gogo_kan.dto.response.BoardResponse;
 import gogo.com.gogo_kan.dto.response.ErrorResponse;
 import gogo.com.gogo_kan.exception.*;
@@ -54,6 +55,7 @@ public class BoardController {
             boardResponse.setBoardId(savedBoard.getBoardId());
             boardResponse.setProjectIndex(savedBoard.getProjectIndex());
             boardResponse.setUpdatedAt(savedBoard.getUpdatedAt());
+            boardResponse.setComplete(savedBoard.isComplete());
             List<Task> userTasks = savedBoard.getTasks();
             if (userTasks == null) {
                 boardResponse.setTasks(Collections.emptyList());
@@ -104,5 +106,15 @@ public class BoardController {
             throw new BoardException("Cannot updated the board");
         }
         return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Board Updated SuccessFully", board);
+    }
+
+
+    @PutMapping("/check-complete-or-not/{id}")
+    public Object checkCompleteOrNotComplete(@PathVariable int id, @RequestBody IsCompleted isComplete) {
+        if (id == -1 || id == 0) {
+            throw new BoardIdNotFoundException("Board Id not found Exception");
+        }
+        boolean isCompleted = this.boardService.compeleteOrNot(id, isComplete.isCompleted);
+        return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Board Updated SuccessFully", isCompleted);
     }
 }

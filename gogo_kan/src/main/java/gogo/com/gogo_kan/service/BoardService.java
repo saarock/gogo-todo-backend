@@ -7,5 +7,6 @@ public interface BoardService {
     public Board findBoardById(int id);
     public boolean deleteBoard(int boardId);
     public Board updateBoard(int boardId,String newBoardName);
+    public boolean compeleteOrNot(int id, boolean isCompelete);
 
 }

@@ -33,6 +33,8 @@ public class GlobalExceptionHandler {
             ProductException.class,
             BoardException.class,
             TaskException.class,
+            ReviewException.class,
+            CredentialException.class,
     })
     protected ResponseEntity<ErrorResponse> handelConflict(
             RuntimeException ex, WebRequest request

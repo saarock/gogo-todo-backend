@@ -2,7 +2,6 @@ package gogo.com.gogo_kan.service.impl.user;
 
 import gogo.com.gogo_kan.exception.ProjectNameNotFoundException;
 import gogo.com.gogo_kan.model.Product;
-import gogo.com.gogo_kan.model.User;
 import gogo.com.gogo_kan.repo.ProductRepository;
 import gogo.com.gogo_kan.service.ProductService;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.ProviderNotFoundException;
@@ -31,14 +29,14 @@ public class ProductServiceImpl implements ProductService {
             product.setName(product.getName());
             return productRepository.save(product);
         } catch (Exception e) {
-           logger.error(e.getMessage());
+            logger.error(e.getMessage());
             return null;
         }
     }
 
     @Override
     public List<Product> getProducts(int pageNumber, int pageSize) {
-        int offset= (pageNumber - 1) * pageSize;
+        int offset = (pageNumber - 1) * pageSize;
         return null;
     }
 
@@ -51,13 +49,14 @@ public class ProductServiceImpl implements ProductService {
             return productRepository.findByProductUserId(userID, pageable);
         } catch (Exception e) {
             // have to give the proper name
-            throw new ProjectNameNotFoundException("Can't fetch userProducts : "+ e.getMessage());
+            throw new ProjectNameNotFoundException("Can't fetch userProducts : " + e.getMessage());
         }
     }
+
     @Override
     public boolean findByProductNameAndUser(String productName, int userId) {
 //        return productRepository.existsByProductName(name);
-        return  this.productRepository.existsByNameAndProductUser_Id(productName, userId);
+        return this.productRepository.existsByNameAndProductUser_Id(productName, userId);
     }
 
     @Override
@@ -66,10 +65,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(int productId,  String productName) {
+    public Product updateProduct(int productId, String productName) {
         try {
             Optional<Product> product = productRepository.findById(productId);
-            if(product.isPresent()) {
+            if (product.isPresent()) {
                 Product getProduct = product.get();
                 getProduct.setName(productName);
                 productRepository.save(getProduct);

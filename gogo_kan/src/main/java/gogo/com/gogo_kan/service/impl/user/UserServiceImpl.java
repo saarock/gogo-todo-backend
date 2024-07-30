@@ -36,9 +36,8 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
-    public User isEmailExistIfExitGetData(String email){
+    public User isEmailExistIfExitGetData(String email) {
         try {
             return userRepository.findByEmail(email);
         } catch (Exception e) {
@@ -57,14 +56,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUserFullName(int id, String newFulName) {
         try {
-            User user =  userRepository.getReferenceById(id);
+            User user = userRepository.getReferenceById(id);
             if (user == null) return null;
             user.setFullName(newFulName);
             User savedUser = userRepository.save(user);
             return savedUser;
 
         } catch (Error e) {
-        return null;
+            return null;
         }
     }
 
@@ -82,6 +81,19 @@ public class UserServiceImpl implements UserService {
             return isFound.orElse(null);
         } catch (Exception error) {
             logger.error(error.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public User changeUserGitUserName(int id, String gitUserName) {
+        try {
+            User user = this.userRepository.getReferenceById(id);
+            if (user == null) return null;
+            user.setGithubUserName(gitUserName);
+            this.userRepository.save(user);
+            return user;
+        } catch (Exception e) {
             return null;
         }
     }
