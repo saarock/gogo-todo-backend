@@ -7,5 +7,7 @@ public interface TaskService {
     public Task createNewTask(Task task);
     public boolean deletedTask(int id);
     public Task updateTask(TaskUpdateRequest taskUpdateRequest, int taskId);
+    public boolean compeleteOrNot(int id, boolean isCompelete);
+
 
 }

@@ -9,4 +9,6 @@ public interface UserService {
     public User updateUserFullName(int id, String newFullName);
     public User updateUserPassword(String email, String newPassword);
     public User findById(int id);
+    public User changeUserGitUserName(int id, String gitUserName);
+
 }

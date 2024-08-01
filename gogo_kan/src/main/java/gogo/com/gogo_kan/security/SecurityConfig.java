@@ -3,6 +3,8 @@ package gogo.com.gogo_kan.security;
 import gogo.com.gogo_kan.security.jwt.AuthEntryPointJwt;
 import gogo.com.gogo_kan.security.jwt.AuthTokenFilter;
 import gogo.com.gogo_kan.service.impl.user.CustomeUserDetailsImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,10 +28,12 @@ import org.springframework.web.filter.CorsFilter;
 import javax.sql.DataSource;
 import java.util.List;
 
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     @Autowired
     private AuthEntryPointJwt authEntryPointJwt;
     @Autowired
@@ -43,31 +47,25 @@ public class SecurityConfig {
         return new AuthTokenFilter();
     }
 
-    @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorizeRequest ->
-                authorizeRequest.requestMatchers("/login").permitAll()
-                        .requestMatchers("/register").permitAll()
-                        .requestMatchers("/home").permitAll()
-                        .requestMatchers("/send-mail").permitAll()
-                        .anyRequest().authenticated()
-        );
-        http.sessionManagement(
-                session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-        );
-        http.headers(headers -> headers
-                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin
-                )
-        );
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.addFilterBefore(authenticationJwtTokenFilter(),
-                UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+@Bean
+public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    http
+            .csrf(AbstractHttpConfigurer::disable)
+            .exceptionHandling(exceptionHandling ->
+                    exceptionHandling.authenticationEntryPoint(authEntryPointJwt))
+            .authorizeHttpRequests(authorizeRequests ->
+                    authorizeRequests
+                            .requestMatchers("/login", "/reset-password", "/register", "/home", "/send-mail", "/contact", "/save-what-users-said").permitAll()
+                            .anyRequest().authenticated()
+            )
+            .sessionManagement(sessionManagement ->
+                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .headers(headers ->
+                    headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+            .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-    }
+    return http.build();
+}
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -77,36 +75,6 @@ public class SecurityConfig {
         return authenticationProvider;
     }
 
-
-//    @Bean
-//    public UserDetailsService userDetailsService(DataSource dataSource) {
-//        return new JdbcUserDetailsManager(dataSource);
-//    }
-//
-//
-//    @Bean
-//    public CommandLineRunner initData(UserDetailsService userDetailsService) {
-//        return args -> {
-//            JdbcUserDetailsManager manager = (JdbcUserDetailsManager) userDetailsService;
-//            UserDetails user1 = User.withUsername("user1")
-//                    .password(passwordEncoder().encode("password1"))
-//                    .roles("USER")
-//                    .build();
-//
-//            UserDetails admin = User.withUsername("admin")
-//                    .password(passwordEncoder().encode("123"))
-//                    .roles("ADMIN")
-//                    .build();
-//
-////            gogo.com.gogo_kan.models.User user = new gogo.com.gogo_kan.models.User();
-//
-//            JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
-//            userDetailsManager.createUser(user1);
-//            userDetailsManager.createUser(admin);
-////            userDetailsManager.createUser(user);
-//        };
-//
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

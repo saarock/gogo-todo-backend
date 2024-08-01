@@ -1,8 +1,10 @@
 package gogo.com.gogo_kan.controller;
 
 import gogo.com.gogo_kan.dto.GlobalSuccessResponse;
+import gogo.com.gogo_kan.dto.request.IsCompleted;
 import gogo.com.gogo_kan.dto.request.TaskRequest;
 import gogo.com.gogo_kan.dto.request.TaskUpdateRequest;
+import gogo.com.gogo_kan.exception.BoardIdNotFoundException;
 import gogo.com.gogo_kan.exception.BoardNotFoundException;
 import gogo.com.gogo_kan.exception.TaskException;
 import gogo.com.gogo_kan.model.Board;
@@ -19,6 +21,9 @@ public class TaskController {
     private TaskService taskService;
     @Autowired
     private BoardService boardService;
+    @Autowired
+    private UserController userController;
+
     @PostMapping("/create-task")
     public Object createTask(@RequestBody TaskRequest taskRequest) throws Exception  {
 
@@ -71,6 +76,16 @@ public class TaskController {
          if (!isDeleted) throw new TaskException("Cannot deleted the task try again");
          return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Task deleted Successfully", null);
 
+    }
+
+    @PutMapping("/check-complete-or-not-task/{id}")
+    public Object checkCompleteOrNotCompleteTask(@PathVariable int id, @RequestBody IsCompleted isComplete) {
+        if (id == -1 || id == 0) {
+            throw new BoardIdNotFoundException("Board Id not found Exception");
+        }
+
+        boolean isCompleted = this.taskService.compeleteOrNot(id, isComplete.isCompleted);
+        return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Board Updated SuccessFully", isCompleted);
     }
 
 }

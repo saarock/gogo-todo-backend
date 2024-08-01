@@ -14,5 +14,6 @@ public interface ProductService {
     public Product findProductByProductId(int id);
     public Product updateProduct(int productId,  String productName);
     public boolean deleteProduct(int productId);
+    public List<Product> searchProductByName(String productName, int userId);
 
 }

@@ -58,6 +58,9 @@ public class User {
     @OneToMany(mappedBy = "productUser", cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
+    @Column(name = "github-username")
+    private String githubUserName;
+
 
 
 }

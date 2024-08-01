@@ -19,5 +19,6 @@ public class User {
     private Role role;
     private Instant createdAt;
     private Instant lastModifiedDate;
+    private String userGithubUserName;
 
 }

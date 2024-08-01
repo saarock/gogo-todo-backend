@@ -1,7 +1,9 @@
 package gogo.com.gogo_kan.service.impl.user;
 
 import gogo.com.gogo_kan.dto.request.TaskUpdateRequest;
+import gogo.com.gogo_kan.exception.BoardException;
 import gogo.com.gogo_kan.exception.TaskException;
+import gogo.com.gogo_kan.model.Board;
 import gogo.com.gogo_kan.model.Task;
 import gogo.com.gogo_kan.repo.TaskRepository;
 import gogo.com.gogo_kan.service.TaskService;
@@ -48,4 +50,15 @@ public class TaskServiceImpl implements TaskService {
         return task;
     }
 
+    @Override
+    public boolean compeleteOrNot(int id, boolean isCompelete) {
+        try {
+            Task task = this.taskRepository.getReferenceById(id);
+            task.setComplete(isCompelete);
+            this.taskRepository.save(task);
+            return task.isComplete();
+        } catch (Exception error) {
+            throw new TaskException("Something wrong");
+        }
+    }
 }

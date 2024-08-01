@@ -19,6 +19,7 @@ public class BoardResponse {
     private String name;
     private int boardId;
     private int projectIndex;
+    private boolean complete;
 //    private int boardIndex;
     private Instant createdAt;
     private Instant updatedAt;

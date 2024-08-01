@@ -43,4 +43,7 @@ public class Task {
     @Column(name = "updatedAt", nullable = false)
     @UpdateTimestamp
     private Instant updatedAt;
+
+    @Column(name = "complete")
+    private boolean complete = false;
 }

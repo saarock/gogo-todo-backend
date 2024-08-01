@@ -94,6 +94,7 @@ public class TokenController {
                 helperUser.setCreatedAt(userDetailsNew.getCreatedDate());
                 helperUser.setLastModifiedDate(userDetailsNew.getLastModifiedDate());
                 helperUser.setFullName(userDetailsNew.getFullName());
+                helperUser.setUserGithubUserName(userDetailsNew.getGithubUserName());
                 Tokens tokens = new Tokens(accessToken, refreshToken);
                 return new UserResponse("success", HttpStatus.OK, "Token generated SuccessFull", helperUser, tokens);
             }
