@@ -269,7 +269,7 @@ public class UserController {
         User user = userService.changeUserGitUserName(id, userName);
         Map<String, String> newGitUserName = new HashMap<>();
         newGitUserName.put("gitUserName", user.getGithubUserName());
-        return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "UpdateSuccesFull", newGitUserName);
+        return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "UpdateSuccessFull", newGitUserName);
     }
 
 
@@ -282,6 +282,35 @@ public class UserController {
         return new GlobalSuccessResponse<>(HttpStatus.CREATED, "success", "Thanks for you review!", true);
 
     }
+
+    @PutMapping("/update-password")
+    public Object updatePassword(@RequestBody PasswordUpdateRequest passwordUpdateRequest) throws Exception {
+        if (passwordUpdateRequest == null) {
+            throw new EmailException("email doesn't found!");
+        }
+        String email = passwordUpdateRequest.getEmail();
+        if (email.isEmpty()) {
+            throw new EmailException("email doesn't found!");
+        }
+        User user = this.userService.isEmailExistIfExitGetData(email);
+        if (user == null) {
+            throw new UserNotFoundException("user with certain email address doesn't exist!");
+        }
+        boolean isPasswordMatch = this.securityConfig.isPasswordMatch(passwordUpdateRequest.getOldPassword(), user.getPassword());
+        if (!isPasswordMatch) {
+            throw new PasswordException("current password doesn't match!");
+        }
+        user.setPassword(passwordUpdateRequest.getNewPassword());
+        User userWithNewPassword  = this.userService.registerUser(user);
+        if (userWithNewPassword == null) {
+        throw new UserNotFoundException("user with certain email address doesn't exist!");
+        }
+        return new GlobalSuccessResponse<>(HttpStatus.CREATED, "success", "Password update successfully", true);
+
+
+
+    }
+
 
 
 }

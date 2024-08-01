@@ -2,12 +2,10 @@ package gogo.com.gogo_kan.service.impl.user;
 
 
 import gogo.com.gogo_kan.exception.CredentialException;
-import gogo.com.gogo_kan.exception.EmailException;
 import gogo.com.gogo_kan.model.User;
 import gogo.com.gogo_kan.repo.UserRepository;
 import gogo.com.gogo_kan.util.UserDetailsCacheUtility;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,20 +15,17 @@ import java.util.ArrayList;
 
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CustomeUserDetailsImpl implements UserDetailsService {
-    @Autowired
     private final UserRepository userRepo;
-    @Autowired
     private UserDetailsCacheUtility userDetailsCache;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             User user = userRepo.findByEmail(username);
-            System.out.println("user this is user ***" + user);
             if (user != null) {
                 userDetailsCache.addToCache(user);
-
                 return new org.springframework.security.core.userdetails.User(
                         user.getEmail(),
                         user.getPassword(),

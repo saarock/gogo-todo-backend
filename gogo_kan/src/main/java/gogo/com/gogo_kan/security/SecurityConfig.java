@@ -55,7 +55,7 @@ public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws 
                     exceptionHandling.authenticationEntryPoint(authEntryPointJwt))
             .authorizeHttpRequests(authorizeRequests ->
                     authorizeRequests
-                            .requestMatchers("/login", "/register", "/home", "/send-mail", "/contact", "/save-what-users-said").permitAll()
+                            .requestMatchers("/login", "/reset-password", "/register", "/home", "/send-mail", "/contact", "/save-what-users-said").permitAll()
                             .anyRequest().authenticated()
             )
             .sessionManagement(sessionManagement ->
