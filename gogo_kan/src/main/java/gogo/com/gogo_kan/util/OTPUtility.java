@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class OTPUtility {
@@ -56,8 +57,9 @@ public class OTPUtility {
 
     public boolean storeOTP(String key, Long timestamp) {
         otpMap.put(key, timestamp);
-        return true;        // remove automatically after one minutes
-        // scheduler.schedule(() -> otpMap.remove(key), 1, TimeUnit.MINUTES);
+        // remove automatically after one minutes
+         scheduler.schedule(() -> otpMap.remove(key), 1, TimeUnit.MINUTES);
+        return true;
     }
 
     public Long getStoredOTP(String key) {
