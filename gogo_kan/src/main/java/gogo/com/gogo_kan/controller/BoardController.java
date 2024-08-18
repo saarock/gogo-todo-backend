@@ -62,7 +62,6 @@ public class BoardController {
             } else {
                 boardResponse.setTasks(userTasks);
             }
-//            boardResponse.set
             return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Board created successfully", boardResponse);
 
 

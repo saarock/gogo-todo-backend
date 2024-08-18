@@ -3,7 +3,6 @@ package gogo.com.gogo_kan.controller;
 
 import gogo.com.gogo_kan.dto.GlobalSuccessResponse;
 import gogo.com.gogo_kan.dto.request.CreateProductRequest;
-import gogo.com.gogo_kan.dto.request.DeleteProductRequest;
 import gogo.com.gogo_kan.dto.request.UpdateProductRequest;
 import gogo.com.gogo_kan.dto.response.ErrorResponse;
 import gogo.com.gogo_kan.dto.response.ProductResponse;
@@ -22,8 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -34,12 +31,11 @@ public class ProductController {
     private UserService userService;
 
 
-
     @PostMapping("/create-new-product")
     public Object createNewProduct(@RequestBody CreateProductRequest productRequest) {
 
         try {
-            System.out.println("Creating new Product");
+
 
             if (productRequest == null || productRequest.getName().isEmpty() || productRequest.getUserId() <= -1) {
                 throw new InvalidException("Invalid product request data");
@@ -57,12 +53,11 @@ public class ProductController {
                 throw new ProductException("ProductName required");
             }
 
-            int productIndex= productRequest.getIndex();
+            int productIndex = productRequest.getIndex();
 
             //Improve code here more;
             boolean isExist = productService.findByProductNameAndUser(productName, userId);
             if (isExist) {
-                System.out.println("hahaahhaha product already exist");
                 throw new ProductException("Product Already exist");
             }
 
@@ -79,7 +74,7 @@ public class ProductController {
             ProductResponse productResponse = new ProductResponse();
             productResponse.setId(String.valueOf(product.getId()));
             productResponse.setName(product.getName());
-            if (product.getBoards() == null)  {
+            if (product.getBoards() == null) {
                 productResponse.setBoards(new ArrayList<>());
             } else {
                 productResponse.setBoards(product.getBoards()); // Set boards accordingly
@@ -88,7 +83,6 @@ public class ProductController {
             productResponse.setCreatedAt(String.valueOf(product.getCreatedDate()));
             productResponse.setUpdatedAt(String.valueOf(product.getUpdatedAt()));
             productResponse.setUserId(String.valueOf(product.getProductUser().getId()));
-
 
 
             return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product created successfully", productResponse);
@@ -108,7 +102,6 @@ public class ProductController {
             }
 
 
-
             Product product = productService.updateProduct(id, productName);
 
             if (product == null) {
@@ -125,7 +118,6 @@ public class ProductController {
 
     @DeleteMapping("/delete-product/{id}")
     public Object deleteProduct(@PathVariable int id) {
-        System.out.println(id + "test test ***");
         boolean isDeleted = this.productService.deleteProduct(id);
         if (isDeleted) {
             return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Product Deleted Successfullt", null);
@@ -144,12 +136,11 @@ public class ProductController {
     }
 
 
-
     @GetMapping("/get-products")
     public Object getProducts(@RequestParam(value = "page", defaultValue = "0") int page,
                               @RequestParam(value = "size", defaultValue = "0") int size, @RequestParam(value = "sortBy",
-            defaultValue = "updatedAt")String sortBy,
-                              @RequestParam(value = "userId")int userId,  @RequestParam("direction") String direction) {
+            defaultValue = "updatedAt") String sortBy,
+                              @RequestParam(value = "userId") int userId, @RequestParam("direction") String direction) {
         try {
             if (userId <= -1) {
                 throw new UserDetailsRequriedException("User id is less than 1");
@@ -167,15 +158,8 @@ public class ProductController {
     @GetMapping("/search")
     public Object searchProduct(@RequestParam(value = "userId") int userId, @RequestParam(value = "productName") String productName) {
         try {
-            System.out.println("***************************** ");
-            System.out.println(userId);
-            System.out.println(productName);
             List<Product> products = productService.searchProductByName(productName, userId);
             if (!products.isEmpty()) {
-                System.out.println("this are the procuits ***************");
-                for (Product p : products) {
-                    System.out.println(p.getName());
-                }
                 return new GlobalSuccessResponse<>(HttpStatus.OK, "success", "Search product", products);
             } else {
                 return new ErrorResponse(HttpStatus.NOT_FOUND, "error", "Product Not found");
@@ -189,7 +173,7 @@ public class ProductController {
     }
 
     @PutMapping("/modified-product/{id}")
-    public Object modifiedProduct(@PathVariable int id)  {
+    public Object modifiedProduct(@PathVariable int id) {
         Product newProduct = productService.findProductByProductId(id);
         if (newProduct == null) {
             throw new ProductException("Product Not found");

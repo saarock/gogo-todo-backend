@@ -40,8 +40,8 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", columnDefinition = "varchar(255) default 'USER'")
-    private Role role;
+    @Column(name = "role")
+    private Role role = Role.user;
 
     @Column(name = "isActive", columnDefinition = "boolean default 1")
     private int isActive;

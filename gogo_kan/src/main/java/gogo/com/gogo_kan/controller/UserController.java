@@ -172,6 +172,7 @@ public class UserController {
     }
 
 
+    // Future work
     @PutMapping("/change-email/{id}")
     public Object updateUserEmail(@PathVariable long id, @RequestBody UpdateEmailRequest updateEmailRequest) {
         if (updateEmailRequest == null) {

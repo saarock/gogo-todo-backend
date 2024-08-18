@@ -55,7 +55,6 @@ public class MailController {
             // if all right send the success message
             return new EmailResponse(HttpStatus.OK, "success", "OTP send successfully ", userEmail);
         } catch (Exception e) {
-            System.out.println(e.getMessage() + "############");
             return new ErrorResponse(HttpStatus.BAD_REQUEST, "error", e.getMessage());
         }
     }
@@ -77,7 +76,6 @@ public class MailController {
                 String newPassword = UUID.randomUUID().toString();
                 user.setPassword(newPassword);
                 User newSavedUser = userService.registerUser(user);
-                System.out.println(newSavedUser + "this is ajkdsfgsadj &&&&&& ");
                 if (newSavedUser == null) {
                     throw new UserServiceException("Some thing wrong try again");
                 } else {

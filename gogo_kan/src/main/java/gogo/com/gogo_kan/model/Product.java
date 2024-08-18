@@ -46,7 +46,7 @@ public class Product {
 
     @UpdateTimestamp
     @Column(name = "last_modified_date", nullable = false)
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
 
 
 

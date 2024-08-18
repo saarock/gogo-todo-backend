@@ -51,14 +51,12 @@ public class TaskController {
 
     @PutMapping("/update-task/{id}")
     public Object updateTask(@PathVariable int id, @RequestBody TaskUpdateRequest taskUpdateRequest) {
-        System.out.println("haha");
         if (taskUpdateRequest == null) {
             throw new TaskException("Task updated is required in the proper manner");
         }
 
         Task task = taskService.updateTask(taskUpdateRequest, id);
         if (task == null) throw new TaskException("Cannot get the updated task");
-        System.out.println(task.getName() + "   this is the task name");
 
         return new GlobalSuccessResponse<>(
                 HttpStatus.OK,

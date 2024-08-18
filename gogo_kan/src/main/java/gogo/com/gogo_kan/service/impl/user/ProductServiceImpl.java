@@ -34,11 +34,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    @Override
-    public List<Product> getProducts(int pageNumber, int pageSize) {
-        int offset = (pageNumber - 1) * pageSize;
-        return null;
-    }
+
 
     @Override
     public Page<Product> getProductByUser(int userID, int page, int size, String sortBy, String direction) {
